@@ -52,13 +52,13 @@ public class KeeValManager {
         return new KeeValRepository<>(type, this);
     }
 
-    public <T> Map<String, String> findAllRawAsMap(Class<T> type) {
+    protected <T> Map<String, String> findAllRawAsMap(Class<T> type) {
         return jdbcTemplate.query("SELECT KEY, VALUE FROM OBJECTS WHERE TYPE = ?", new Object[]{type.getName()},
                 rawKeyValueRowMapper())
                 .stream().collect(Collectors.toMap(KeyValue::getKey, KeyValue::getValue));
     }
 
-    public <T> Optional<String> findRawByKey(Object key, Class<T> type) {
+    protected <T> Optional<String> findRawByKey(Object key, Class<T> type) {
         try {
             return Optional.of(jdbcTemplate.queryForObject("SELECT VALUE FROM OBJECTS WHERE KEY = ? AND TYPE = ?",
                     new Object[]{key, type.getName()}, rawValueRowMapper()));
