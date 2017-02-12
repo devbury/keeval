@@ -9,7 +9,7 @@
 
     <name>keeval</name>
     <description>JDBC Based Key/Value Store</description>
-    <url>FIX ME</url>
+    <url>https://github.com/devbury/keeval</url>
 
     <licenses>
         <license>
