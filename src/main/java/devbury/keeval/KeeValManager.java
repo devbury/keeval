@@ -52,13 +52,13 @@ public class KeeValManager {
         return new KeeValRepository<>(type, this);
     }
 
-    protected <T> Map<String, String> findAllRawAsMap(Class<T> type) {
+    <T> Map<String, String> findAllRawAsMap(Class<T> type) {
         return jdbcTemplate.query("SELECT KEY, VALUE FROM OBJECTS WHERE TYPE = ?", new Object[]{type.getName()},
                 rawKeyValueRowMapper())
                 .stream().collect(Collectors.toMap(KeyValue::getKey, KeyValue::getValue));
     }
 
-    protected <T> Optional<String> findRawByKey(Object key, Class<T> type) {
+    <T> Optional<String> findRawByKey(Object key, Class<T> type) {
         try {
             return Optional.of(jdbcTemplate.queryForObject("SELECT VALUE FROM OBJECTS WHERE KEY = ? AND TYPE = ?",
                     new Object[]{key, type.getName()}, rawValueRowMapper()));
@@ -67,7 +67,7 @@ public class KeeValManager {
         }
     }
 
-    protected <T> Optional<T> findByKey(Object key, Class<T> type) {
+    <T> Optional<T> findByKey(Object key, Class<T> type) {
         try {
             return Optional.of(jdbcTemplate.queryForObject("SELECT VALUE FROM OBJECTS WHERE KEY = ? AND TYPE = ?",
                     new Object[]{key, type.getName()}, valueRowMapper(type)));
@@ -76,7 +76,7 @@ public class KeeValManager {
         }
     }
 
-    protected void update(Object key, Object value) {
+    void update(Object key, Object value) {
         try {
             String stringVal = objectMapper.writeValueAsString(value);
             jdbcTemplate.update("UPDATE OBJECTS SET VALUE = ? WHERE KEY = ? AND TYPE = ?", stringVal, key, value
@@ -87,7 +87,7 @@ public class KeeValManager {
         }
     }
 
-    protected void createOrUpdate(Object key, Object value) {
+    void createOrUpdate(Object key, Object value) {
         try {
             create(key, value);
         } catch (DuplicateKeyException e) {
@@ -95,22 +95,22 @@ public class KeeValManager {
         }
     }
 
-    protected <T> Map<String, T> findAllAsMap(Class<T> type) {
+    <T> Map<String, T> findAllAsMap(Class<T> type) {
         return jdbcTemplate.query("SELECT KEY, VALUE FROM OBJECTS WHERE TYPE = ?",
                 new Object[]{type.getName()}, keyValueRowMapper(type))
                 .stream().collect(Collectors.toMap(KeyValue::getKey, KeyValue::getValue));
     }
 
-    protected <T> List<T> findAll(Class<T> type) {
+    <T> List<T> findAll(Class<T> type) {
         return jdbcTemplate.query("SELECT VALUE FROM OBJECTS WHERE TYPE = ?",
                 new Object[]{type.getName()}, valueRowMapper(type));
     }
 
-    protected <T> void delete(Object key, Class<T> type) {
+    <T> void delete(Object key, Class<T> type) {
         jdbcTemplate.update("DELETE FROM OBJECTS WHERE KEY = ? AND TYPE = ?", key, type.getName());
     }
 
-    protected void create(Object key, Object value) {
+    void create(Object key, Object value) {
         try {
             String stringVal = objectMapper.writeValueAsString(value);
             jdbcTemplate.update("INSERT INTO OBJECTS(KEY, TYPE, VALUE) VALUES (?,?,?)", key, value.getClass()
